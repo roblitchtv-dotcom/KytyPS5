@@ -104,6 +104,9 @@ struct GraphicContext {
 	void               DestroyAllocator();
 	void               LogMemoryBudget() const;
 	[[nodiscard]] bool CanReportMemoryUsage() const noexcept { return memory_budget_ext_enabled; }
+	[[nodiscard]] bool IsDiscreteGpu() const noexcept {
+		return physical_device_properties.deviceType == vk::PhysicalDeviceType::eDiscreteGpu;
+	}
 	[[nodiscard]] uint64_t GetDeviceMemoryUsage() const;
 	[[nodiscard]] uint64_t GetTotalMemoryBudget() const;
 
