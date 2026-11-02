@@ -153,6 +153,10 @@ bool ShaderCacheEnabled() {
 	return g_config->shader_cache_enabled;
 }
 
+uint32_t GetShaderWarmupThreads() {
+	return g_config->shader_warmup_threads;
+}
+
 ShaderOptimizationType GetShaderOptimizationType() {
 	return g_config->shader_optimization_type;
 }

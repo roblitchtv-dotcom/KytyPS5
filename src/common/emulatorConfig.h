@@ -77,6 +77,8 @@ struct ConfigOptions {
 	bool                   vulkan_validation_enabled   = false;
 	bool                   shader_validation_enabled   = false;
 	bool                   shader_cache_enabled        = false;
+	// Threads that compile the shader cache at boot; 0 uses half the hardware threads.
+	uint32_t               shader_warmup_threads       = 0;
 	ShaderOptimizationType shader_optimization_type    = ShaderOptimizationType::None;
 	LogDirection           shader_log_direction        = LogDirection::Silent;
 	std::filesystem::path  shader_log_folder           = "_Shaders";
@@ -142,6 +144,7 @@ bool     VulkanValidationEnabled();
 
 bool                   ShaderValidationEnabled();
 bool                   ShaderCacheEnabled();
+uint32_t               GetShaderWarmupThreads();
 ShaderOptimizationType GetShaderOptimizationType();
 LogDirection           GetShaderLogDirection();
 std::filesystem::path  GetShaderLogFolder();

@@ -87,6 +87,10 @@ static void PrintUsage() {
 	         "                                       Implies --vulkan-validation; very slow.\n");
 	::printf("  --shader-validation                  Enable shader validation.\n");
 	::printf("  --shader-cache                       Keep compiled shaders and pipelines between boots.\n");
+	::printf(
+	    "  --shader-warmup-threads <num>        Threads compiling the shader cache at boot.\n"
+	    "                                       Default: 0 (half the CPU threads); 1 compiles\n"
+	    "                                       one pipeline at a time.\n");
 	::printf("  --tessellation                      Draw tessellation patches; skipped by default.\n");
 	::printf("  --occlusion-queries                  Count occlusion query samples on the GPU.\n");
 	::printf("  --shader-optimization-type <value>   None, Size, or Performance.\n");
@@ -390,6 +394,11 @@ static bool ParseArgs(int argc, char* argv[], RunOptions& options, bool& show_he
 		} else if (arg == "--vblank-frequency") {
 			if (!ParseUint32(value, options.config.vblank_frequency)) {
 				::printf("invalid vblank frequency: %s\n", value.c_str());
+				return false;
+			}
+		} else if (arg == "--shader-warmup-threads") {
+			if (!ParseUint32(value, options.config.shader_warmup_threads)) {
+				::printf("invalid shader warmup threads: %s\n", value.c_str());
 				return false;
 			}
 		} else if (arg == "--trophy-duration") {
