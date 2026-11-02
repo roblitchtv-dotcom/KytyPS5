@@ -19,6 +19,7 @@ add_executable(launcher WIN32
 	${launcher_forms}
 	resources.qrc
 )
+kyty_cpu_check(launcher WinMainCRTStartup)
 
 
 target_link_libraries(launcher Qt6::Concurrent Qt6::Network Qt6::Widgets Vulkan::Headers SDL3::SDL3-static

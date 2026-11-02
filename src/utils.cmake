@@ -125,3 +125,20 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${KYTY_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${KYTY_CPP_FLAGS}")
 
 endmacro()
+
+# cpuCheck.cpp rejects a CPU without x86-64-v3 before any code built for it runs, so it is built
+# for plain x86-64 itself. On Windows it becomes the entry point and then calls crt_entry, the C
+# runtime entry the target would otherwise start at.
+function(kyty_cpu_check target crt_entry)
+	set(source "${KYTY_SOURCE_DIR}/cpuCheck.cpp")
+	target_sources(${target} PRIVATE "${source}")
+	if(KYTY_CLANG_CL)
+		set_source_files_properties("${source}" TARGET_DIRECTORY ${target} PROPERTIES
+			COMPILE_OPTIONS "/clang:-march=x86-64"
+			COMPILE_DEFINITIONS "KYTY_CPU_CHECK_CRT_ENTRY=${crt_entry}")
+		target_link_options(${target} PRIVATE "/ENTRY:KytyCpuCheckEntry")
+	elseif(NOT APPLE)
+		set_source_files_properties("${source}" TARGET_DIRECTORY ${target} PROPERTIES
+			COMPILE_OPTIONS "-march=x86-64")
+	endif()
+endfunction()
