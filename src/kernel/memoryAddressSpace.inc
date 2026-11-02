@@ -690,9 +690,18 @@ public:
 		m_backing = new GuestBackingStore(backing_size);
 		if (!m_backing->IsAvailable()) {
 #if KYTY_PLATFORM == KYTY_PLATFORM_WINDOWS
+			// PCs with little RAM and a small paging file hit this, so say what to change.
+			MEMORYSTATUSEX status {};
+			status.dwLength = sizeof(status);
+			GlobalMemoryStatusEx(&status);
 			EXIT("could not reserve %" PRIu64 " MB for guest direct memory. Windows commits\n"
-			     "this up front, so the paging file is usually what needs to be larger.\n",
-			     backing_size / (1024U * 1024U));
+			     "this up front, so the paging file is usually what needs to be larger.\n"
+			     "Only %" PRIu64 " MB of the %" PRIu64
+			     " MB commit limit (RAM + paging file) is free.\n"
+			     "Enlarge the paging file in System > About > Advanced system settings >\n"
+			     "Performance > Settings > Advanced > Virtual memory, then restart the game.\n",
+			     backing_size / (1024U * 1024U), status.ullAvailPageFile / (1024U * 1024U),
+			     status.ullTotalPageFile / (1024U * 1024U));
 #else
 			EXIT("could not reserve %" PRIu64 " MB for guest direct memory\n",
 			     backing_size / (1024U * 1024U));
